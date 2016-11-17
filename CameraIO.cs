@@ -18,13 +18,10 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         private static string VidSegPath  = null;
         private static int FramesInPath   = 0;
         private static bool isFirstRound  = true;
-        public Thread _oThread;
 
         public CameraIO(MainWindow mainWindow)
         {
             _mainWindow = mainWindow;
-            _oThread = new Thread(SaveFrame);
-
         }
 
         private static void SaveZipToBlob(string zipPath, string blobName)
@@ -46,32 +43,12 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         {
             if (_mainWindow.colorBitmap == null) return;
 
-        
             // create a png bitmap encoder which knows how to save a .png file
-            BitmapEncoder encoder = new JpegBitmapEncoder();
-
             // create frame from the writable bitmap and add to encoder
-            encoder.Frames.Add(BitmapFrame.Create(_mainWindow.colorBitmap));
+            BitmapEncoder encoder = new JpegBitmapEncoder();
+                          encoder.Frames.Add(BitmapFrame.Create(_mainWindow.colorBitmap));
 
-            DateTime now   = System.DateTime.Now;
-            string nowPath = now.Month.ToString() + "_" + now.Day.ToString()    + "_" + now.Year.ToString()   + "_" +
-                             now.Hour.ToString()  + "_" + now.Minute.ToString() + "_" + now.Second.ToString() + "_" + now.Millisecond.ToString();
-
-            if (String.IsNullOrEmpty(VidSegPath) || FramesInPath > ImagesPerZip)
-            {
-                if (!isFirstRound)
-                {
-                    string zipPath = ImageBasePath + VidSegPath + ".zip";
-                    ZipFile.CreateFromDirectory(ImageBasePath + VidSegPath, zipPath);
-                    SaveZipToBlob(zipPath, VidSegPath);
-                }
-                VidSegPath   = nowPath;
-                FramesInPath = 0;
-                Directory.CreateDirectory(ImageBasePath + VidSegPath + "\\");
-                isFirstRound = false;
-            }
-
-            string path = ImageBasePath + VidSegPath + "\\" + nowPath + ".jpg";
+            var path = GetnerateFile();
 
             // write the new file to disk
             try
@@ -91,6 +68,29 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             }
         }
 
+        private static string GetnerateFile()
+        {
+            DateTime now = System.DateTime.Now;
+            string nowPath = now.Month.ToString() + "_" + now.Day.ToString() + "_" + now.Year.ToString() + "_" +
+                             now.Hour.ToString() + "_" + now.Minute.ToString() + "_" + now.Second.ToString() + "_" +
+                             now.Millisecond.ToString();
 
+            if (String.IsNullOrEmpty(VidSegPath) || FramesInPath > ImagesPerZip)
+            {
+                if (!isFirstRound)
+                {
+                    string zipPath = ImageBasePath + VidSegPath + ".zip";
+                    ZipFile.CreateFromDirectory(ImageBasePath + VidSegPath, zipPath);
+                    SaveZipToBlob(zipPath, VidSegPath);
+                }
+                VidSegPath = nowPath;
+                FramesInPath = 0;
+                Directory.CreateDirectory(ImageBasePath + VidSegPath + "\\");
+                isFirstRound = false;
+            }
+
+            string path = ImageBasePath + VidSegPath + "\\" + nowPath + ".jpg";
+            return path;
+        }
     }
 }
