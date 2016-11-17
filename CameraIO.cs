@@ -1,7 +1,10 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Microsoft.WindowsAzure.Storage;
 
 namespace Microsoft.Samples.Kinect.ColorBasics
@@ -15,10 +18,13 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         private static string VidSegPath  = null;
         private static int FramesInPath   = 0;
         private static bool isFirstRound  = true;
+        public Thread _oThread;
 
         public CameraIO(MainWindow mainWindow)
         {
             _mainWindow = mainWindow;
+            _oThread = new Thread(SaveFrame);
+
         }
 
 
@@ -47,6 +53,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         {
             if (_mainWindow.colorBitmap == null) return;
 
+        
             // create a png bitmap encoder which knows how to save a .png file
             BitmapEncoder encoder = new JpegBitmapEncoder();
 
@@ -90,5 +97,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
                 _mainWindow.StatusText = string.Format(Properties.Resources.FailedScreenshotStatusTextFormat, path);
             }
         }
+
+
     }
 }

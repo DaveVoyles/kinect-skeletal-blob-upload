@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Timers;
+using System.Windows.Threading;
 using Microsoft.Kinect;
 
 namespace Microsoft.Samples.Kinect.ColorBasics
@@ -27,9 +29,11 @@ namespace Microsoft.Samples.Kinect.ColorBasics
 
         public bool isTracking                  = true;
 
-        private readonly CameraIO _cameraIo;
+        private CameraIO _cameraIo;
 
         private MainWindow mainWindow;
+
+        public Thread oThread;
 
         public KinectManager()
         {
@@ -44,6 +48,10 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             this.bodyFrameReader.FrameArrived += this.Reader_FrameArrived;
 
             _cameraIo = new CameraIO(mainWindow);
+
+            // Create the thread object, passing in the Alpha.Beta method
+            // via a ThreadStart delegate. This does not start the thread.
+            oThread = new Thread(CameraIO.SaveFrame);
 
             Debug.WriteLine("KinectManager Init");
         }
@@ -100,7 +108,26 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             if (body != null && this.bodyTracked && body.IsTracked)
             {
                 // Tracking skeleton -- save video to file
-                CameraIO.SaveFrame();
+                //CameraIO.SaveFrame();
+
+                _cameraIo._oThread.Start();
+                //oThread.Start();
+                //while (!oThread.IsAlive)
+                //{
+                //    // Put the Main thread to sleep for 1 millisecond to allow oThread
+                //    // to do some work:
+                //    Thread.Sleep(1);
+
+                //    // Request that oThread be stopped
+                //    oThread.Abort();
+
+                //    // Wait until oThread finishes. Join also has overloads
+                //    // that take a millisecond interval or a TimeSpan object.
+                //    oThread.Join();
+
+                //    Console.WriteLine();
+                //    Console.WriteLine("Alpha.Beta has finished");
+                //}
             }
             else
             {

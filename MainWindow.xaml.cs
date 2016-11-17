@@ -3,6 +3,9 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
+
+using System.Threading;
+
 namespace Microsoft.Samples.Kinect.ColorBasics
 {
     using System.ComponentModel;
@@ -39,8 +42,9 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         public string statusText = null;
 
 
-        private readonly CameraIO _cameraIo;
         private KinectManager kinectManager;
+
+        public Thread MainWindowThread;
 
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
@@ -78,9 +82,8 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             // initialize the components (controls) of the window
             this.InitializeComponent();
 
-            //todo: Does order matter here?
             kinectManager = new KinectManager();
-            _cameraIo = new CameraIO(this);
+            CameraIo     = new CameraIO(this);
 
         }
 
@@ -125,10 +128,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             }
         }
 
-        public CameraIO CameraIo
-        {
-            get { return _cameraIo; }
-        }
+        public CameraIO CameraIo { get; }
 
         /// <summary>
         /// Execute shutdown tasks
