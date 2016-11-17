@@ -1,11 +1,12 @@
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Microsoft.WindowsAzure.Storage;
+
 
 namespace Microsoft.Samples.Kinect.ColorBasics
 {
@@ -24,7 +25,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             _mainWindow = mainWindow;
         }
 
-        private static void SaveZipToBlob(string zipPath, string blobName)
+        private static async void SaveZipToBlobAsync(string zipPath, string blobName)
         {
             var sAccount      = CloudStorageAccount.Parse(MainWindow.BlobConnString);
             var blobClient    = sAccount.CreateCloudBlobClient();
@@ -35,9 +36,10 @@ namespace Microsoft.Samples.Kinect.ColorBasics
 
             using (var fileStream = File.OpenRead(zipPath))
             {
-                blockBlob.UploadFromStream(fileStream);
+               await blockBlob.UploadFromStreamAsync(fileStream);
             }
         }
+
 
         public static void SaveFrame()
         {
@@ -68,6 +70,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             }
         }
 
+
         private static string GetnerateFile()
         {
             DateTime now = System.DateTime.Now;
@@ -81,14 +84,13 @@ namespace Microsoft.Samples.Kinect.ColorBasics
                 {
                     string zipPath = ImageBasePath + VidSegPath + ".zip";
                     ZipFile.CreateFromDirectory(ImageBasePath + VidSegPath, zipPath);
-                    SaveZipToBlob(zipPath, VidSegPath);
-                }
-                VidSegPath = nowPath;
+                    SaveZipToBlobAsync(zipPath, VidSegPath); // Slowest point in app
+                }  
+                VidSegPath   = nowPath;
                 FramesInPath = 0;
                 Directory.CreateDirectory(ImageBasePath + VidSegPath + "\\");
                 isFirstRound = false;
             }
-
             string path = ImageBasePath + VidSegPath + "\\" + nowPath + ".jpg";
             return path;
         }
