@@ -5,6 +5,8 @@ using System.Threading;
 using System.Timers;
 using System.Windows.Threading;
 using Microsoft.Kinect;
+using System.Threading;
+using System.Timers;
 
 namespace Microsoft.Samples.Kinect.ColorBasics
 {
@@ -28,8 +30,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         private bool bodyTracked                = false;
 
         public bool isTracking                  = true;
-
-        private CameraIO _cameraIo;
+        private bool bStartTimer                = false;
 
         private MainWindow mainWindow;
 
@@ -37,6 +38,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
 
         public KinectManager()
         {
+
             this.kinectSensor    = KinectSensor.GetDefault();
 
             // open the reader for the body frames
@@ -46,12 +48,6 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             this.kinectSensor.Open();
 
             this.bodyFrameReader.FrameArrived += this.Reader_FrameArrived;
-
-            _cameraIo = new CameraIO(mainWindow);
-
-            // Create the thread object, passing in the Alpha.Beta method
-            // via a ThreadStart delegate. This does not start the thread.
-            oThread = new Thread(CameraIO.SaveFrame);
 
             Debug.WriteLine("KinectManager Init");
         }
@@ -69,6 +65,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
                 {
                     if (this.bodies == null)
                     {
+                        Debug.WriteLine("Bodies are null");
                         this.bodies = new Body[bodyFrame.BodyCount];
                     }
                     bodyFrame.GetAndRefreshBodyData(this.bodies);
@@ -81,16 +78,15 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             Body body = null;
             if (this.bodyTracked)
             {
-                Debug.Write("bodyTracked: is TRUE");
+                //Debug.Write("Tracking body");
                 if (this.bodies[this.bodyIndex].IsTracked)
                 {
-                    // Keep track of ID when tracking multiple bodies
                     body = this.bodies[this.bodyIndex];
-                    Debug.WriteLine("Body: " + body);
                 }
                 else
                 {
                     bodyTracked = false;
+                    Debug.Write("Not tracking body");
                 }
             }
             if (!bodyTracked)
@@ -108,34 +104,15 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             if (body != null && this.bodyTracked && body.IsTracked)
             {
                 // Tracking skeleton -- save video to file
-                //CameraIO.SaveFrame();
-
-                _cameraIo._oThread.Start();
-                //oThread.Start();
-                //while (!oThread.IsAlive)
-                //{
-                //    // Put the Main thread to sleep for 1 millisecond to allow oThread
-                //    // to do some work:
-                //    Thread.Sleep(1);
-
-                //    // Request that oThread be stopped
-                //    oThread.Abort();
-
-                //    // Wait until oThread finishes. Join also has overloads
-                //    // that take a millisecond interval or a TimeSpan object.
-                //    oThread.Join();
-
-                //    Console.WriteLine();
-                //    Console.WriteLine("Alpha.Beta has finished");
-                //}
+                CameraIO.SaveFrame();
             }
             else
             {
                 isTracking = false;
-                //Debug.WriteLine("------STOPPED TRACKING-------");
+                Debug.WriteLine("------STOPPED-------");
             }
         }
-
-     
+    
+        
     }
 }

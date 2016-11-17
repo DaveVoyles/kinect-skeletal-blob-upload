@@ -40,9 +40,10 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         /// Current status text to display
         /// </summary>
         public string statusText = null;
-
+ 
 
         private KinectManager kinectManager;
+        private readonly CameraIO _cameraIo;
 
         public Thread MainWindowThread;
 
