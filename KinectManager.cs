@@ -109,6 +109,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             if (body != null && this.bodyTracked && body.IsTracked)
             {
                 // TRACKING IS WORKING!
+                // TODO Just made this static. Will it break?
                 CameraIO.SaveFrame();
             }
             else

@@ -10,8 +10,8 @@ namespace Microsoft.Samples.Kinect.ColorBasics
     public class CameraIO
     {
         public const string ImageBasePath = "C:\\Images\\";
-        private MainWindow _mainWindow;
-        private int ImagesPerZip = 200;
+        private static MainWindow _mainWindow;
+        private static int ImagesPerZip = 200;
 
         /// <summary>
         /// Handles the user clicking on the screenshot button
@@ -19,17 +19,17 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         /// <param name="sender">object sending the event</param>
         /// <param name="e">event arguments</param>
 
-        private string VidSegPath = null;
+        private static string VidSegPath = null;
 
-        private int FramesInPath = 0;
-        private bool isFirstRound = true;
+        private static int FramesInPath = 0;
+        private static bool isFirstRound = true;
 
         public CameraIO(MainWindow mainWindow)
         {
             _mainWindow = mainWindow;
         }
 
-        private void SaveZipToBlob(string zipPath, string blobName)
+        private static void SaveZipToBlob(string zipPath, string blobName)
         {
             CloudStorageAccount sAccount = CloudStorageAccount.Parse(MainWindow.BlobConnString);
             CloudBlobClient blobClient = sAccount.CreateCloudBlobClient();
@@ -42,7 +42,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             }
         }
 
-        public void SaveFrame()
+        public static void SaveFrame()
         {
             if (_mainWindow.colorBitmap != null)
             {
@@ -59,7 +59,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
                     {
                         string zipPath = ImageBasePath + VidSegPath + ".zip";
                         ZipFile.CreateFromDirectory(ImageBasePath + VidSegPath, zipPath);
-                        this.SaveZipToBlob(zipPath, VidSegPath);
+                        SaveZipToBlob(zipPath, VidSegPath);
                     }
                     VidSegPath = nowPath;
                     FramesInPath = 0;
