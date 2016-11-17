@@ -40,6 +40,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
 
 
         private readonly CameraIO _cameraIo;
+        private KinectManager kinectManager;
 
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
@@ -77,8 +78,10 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             // initialize the components (controls) of the window
             this.InitializeComponent();
 
-            var kinectManager = new KinectManager();
+            //todo: Does order matter here?
+            kinectManager = new KinectManager();
             _cameraIo = new CameraIO(this);
+
         }
 
         /// <summary>

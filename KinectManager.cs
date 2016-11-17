@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Timers;
 using Microsoft.Kinect;
-using System.Threading;
-using System.Timers;
 
 namespace Microsoft.Samples.Kinect.ColorBasics
 {
@@ -28,10 +26,6 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         private bool bodyTracked                = false;
 
         public bool isTracking                  = true;
-        private bool bStartTimer                = false;
-
-        private System.Timers.Timer _timer;
-         List<DateTime> _l; // Stores timer results
 
         private readonly CameraIO _cameraIo;
 
@@ -39,9 +33,6 @@ namespace Microsoft.Samples.Kinect.ColorBasics
 
         public KinectManager()
         {
-            //mainWindow = new MainWindow();
-       
-            _timer               = new System.Timers.Timer();
             this.kinectSensor    = KinectSensor.GetDefault();
 
             // open the reader for the body frames
@@ -70,7 +61,6 @@ namespace Microsoft.Samples.Kinect.ColorBasics
                 {
                     if (this.bodies == null)
                     {
-                        Debug.WriteLine("Bodies are null");
                         this.bodies = new Body[bodyFrame.BodyCount];
                     }
                     bodyFrame.GetAndRefreshBodyData(this.bodies);
@@ -83,15 +73,16 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             Body body = null;
             if (this.bodyTracked)
             {
-                //Debug.Write("Tracking body");
+                Debug.Write("bodyTracked: is TRUE");
                 if (this.bodies[this.bodyIndex].IsTracked)
                 {
+                    // Keep track of ID when tracking multiple bodies
                     body = this.bodies[this.bodyIndex];
+                    Debug.WriteLine("Body: " + body);
                 }
                 else
                 {
                     bodyTracked = false;
-                    Debug.Write("Not tracking body");
                 }
             }
             if (!bodyTracked)
@@ -108,32 +99,16 @@ namespace Microsoft.Samples.Kinect.ColorBasics
 
             if (body != null && this.bodyTracked && body.IsTracked)
             {
-                // TRACKING IS WORKING!
-                // TODO Just made this static. Will it break?
+                // Tracking skeleton -- save video to file
                 CameraIO.SaveFrame();
             }
             else
             {
                 isTracking = false;
-                Debug.WriteLine("------STOPPED-------");
+                //Debug.WriteLine("------STOPPED TRACKING-------");
             }
         }
 
-        
-
- 
-
-        void _timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            //  SaveFrame() here
-            isTracking = true;
-            bStartTimer = false;
-            if (isTracking == true)
-            {
-                Debug.WriteLine("---Is tracking = true ---");
-            }
-        }
-
-
+     
     }
 }
