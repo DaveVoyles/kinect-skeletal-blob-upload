@@ -21,6 +21,13 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             _mainWindow = mainWindow;
         }
 
+
+        /// <summary>
+        /// Gets reference to blockblob.
+        /// Account -> Client -> Container -> bloclblob
+        /// </summary>
+        /// <param name="zipPath"></param>
+        /// <param name="blobName">Name of the file to be saved</param>
         private static void SaveZipToBlob(string zipPath, string blobName)
         {
             var sAccount      = CloudStorageAccount.Parse(MainWindow.BlobConnString);
