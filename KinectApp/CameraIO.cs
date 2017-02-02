@@ -1,10 +1,7 @@
 using System;
-using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
-using System.Timers;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using Microsoft.WindowsAzure.Storage;
 
 
@@ -25,6 +22,10 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             _mainWindow = mainWindow;
         }
 
+        /// <summary>
+        /// Connect to blob storage account and create container if it does not exist. 
+        /// Afterwards, upload it to Azure blob storage
+        /// </summary>
         private static async void SaveZipToBlobAsync(string zipPath, string blobName)
         {
             var sAccount      = CloudStorageAccount.Parse(MainWindow.BlobConnString);

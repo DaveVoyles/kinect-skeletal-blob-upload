@@ -1,18 +1,11 @@
-﻿//------------------------------------------------------------------------------
-// <copyright file="MainWindow.xaml.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-
-using System.Threading;
-
-namespace Microsoft.Samples.Kinect.ColorBasics
+﻿namespace Microsoft.Samples.Kinect.ColorBasics
 {
     using System.ComponentModel;
     using System.Windows;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
     using Microsoft.Kinect;
+    using System.Threading;
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -24,7 +17,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         /// <summary>
         /// Active Kinect sensor
         /// </summary>
-        private KinectSensor kinectSensor = null;
+        private KinectSensor kinectSensor        = null;
 
         /// <summary>
         /// Reader for color frames
@@ -34,12 +27,12 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         /// <summary>
         /// Bitmap to display
         /// </summary>
-        public WriteableBitmap colorBitmap = null;
+        public WriteableBitmap colorBitmap       = null;
 
         /// <summary>
         /// Current status text to display
         /// </summary>
-        public string statusText = null;
+        public string statusText                 = null;
  
 
         private KinectManager kinectManager;
@@ -53,19 +46,23 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         public MainWindow()
         {
             // get the kinectSensor object
-            this.kinectSensor = KinectSensor.GetDefault();
+            this.kinectSensor                      = KinectSensor.GetDefault();
 
             // open the reader for the color frames
-            this.colorFrameReader = this.kinectSensor.ColorFrameSource.OpenReader();
+            this.colorFrameReader                  = this.kinectSensor.ColorFrameSource.OpenReader();
 
             // wire handler for frame arrival
-            this.colorFrameReader.FrameArrived += this.Reader_ColorFrameArrived;
+            this.colorFrameReader.FrameArrived    += this.Reader_ColorFrameArrived;
 
             // create the colorFrameDescription from the ColorFrameSource using Bgra format
             FrameDescription colorFrameDescription = this.kinectSensor.ColorFrameSource.CreateFrameDescription(ColorImageFormat.Bgra);
 
             // create the bitmap to display
-            this.colorBitmap = new WriteableBitmap(colorFrameDescription.Width, colorFrameDescription.Height, 96.0, 96.0, PixelFormats.Bgr32, null);
+            this.colorBitmap                       = new WriteableBitmap(colorFrameDescription.Width, 
+                                                                         colorFrameDescription.Height, 
+                                                                         96.0, 96.0, 
+                                                                         PixelFormats.Bgr32,
+                                                                         null);
 
             // set IsAvailableChanged event notifier
             this.kinectSensor.IsAvailableChanged += this.Sensor_IsAvailableChanged;
@@ -83,9 +80,8 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             // initialize the components (controls) of the window
             this.InitializeComponent();
 
-            kinectManager = new KinectManager();
-            CameraIo     = new CameraIO(this);
-
+            //kinectManager = new KinectManager();
+            CameraIo      = new CameraIO(this);
         }
 
         /// <summary>
@@ -96,13 +92,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         /// <summary>
         /// Gets the bitmap to display
         /// </summary>
-        public ImageSource ImageSource
-        {
-            get
-            {
-                return this.colorBitmap;
-            }
-        }
+        public ImageSource ImageSource => this.colorBitmap;
 
         /// <summary>
         /// Gets or sets the current status text to display
@@ -113,19 +103,13 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             {
                 return this.statusText;
             }
-
             set
             {
-                if (this.statusText != value)
-                {
-                    this.statusText = value;
+                if (this.statusText == value) return;
+                this.statusText = value;
 
-                    // notify any bound elements that the text has changed
-                    if (this.PropertyChanged != null)
-                    {
-                        this.PropertyChanged(this, new PropertyChangedEventArgs("StatusText"));
-                    }
-                }
+                // notify any bound elements that the text has changed
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("StatusText"));
             }
         }
 
@@ -145,11 +129,9 @@ namespace Microsoft.Samples.Kinect.ColorBasics
                 this.colorFrameReader = null;
             }
 
-            if (this.kinectSensor != null)
-            {
-                this.kinectSensor.Close();
-                this.kinectSensor = null;
-            }
+            if (this.kinectSensor == null) return;
+            this.kinectSensor.Close();
+            this.kinectSensor = null;
         }
 
   
@@ -165,30 +147,28 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             // ColorFrame is IDisposable
             using (ColorFrame colorFrame = e.FrameReference.AcquireFrame())
             {
-                if (colorFrame != null)
+                if (colorFrame == null) return;
+                FrameDescription colorFrameDescription = colorFrame.FrameDescription;
+
+                using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
                 {
-                    FrameDescription colorFrameDescription = colorFrame.FrameDescription;
+                    this.colorBitmap.Lock();
 
-                    using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
+                    // verify data and write the new color frame data to the display bitmap
+                    if ((colorFrameDescription.Width == this.colorBitmap.PixelWidth) && (colorFrameDescription.Height == this.colorBitmap.PixelHeight))
                     {
-                        this.colorBitmap.Lock();
+                        colorFrame.CopyConvertedFrameDataToIntPtr(
+                            this.colorBitmap.BackBuffer,
+                            (uint)(colorFrameDescription.Width * colorFrameDescription.Height * 4),
+                            ColorImageFormat.Bgra);
 
-                        // verify data and write the new color frame data to the display bitmap
-                        if ((colorFrameDescription.Width == this.colorBitmap.PixelWidth) && (colorFrameDescription.Height == this.colorBitmap.PixelHeight))
-                        {
-                            colorFrame.CopyConvertedFrameDataToIntPtr(
-                                this.colorBitmap.BackBuffer,
-                                (uint)(colorFrameDescription.Width * colorFrameDescription.Height * 4),
-                                ColorImageFormat.Bgra);
-
-                            this.colorBitmap.AddDirtyRect(new Int32Rect(0, 0, this.colorBitmap.PixelWidth, this.colorBitmap.PixelHeight));
-                        }
-
-                        this.colorBitmap.Unlock();
+                        this.colorBitmap.AddDirtyRect(new Int32Rect(0, 0, this.colorBitmap.PixelWidth, this.colorBitmap.PixelHeight));
                     }
-                    // TODO: Have KinectManager call this
-                    // CameraIo.SaveFrame();
+
+                    this.colorBitmap.Unlock();
                 }
+                // TODO: Have KinectManager call this
+                // CameraIo.SaveFrame();
             }
         }
 
