@@ -4,7 +4,6 @@ using System.IO.Compression;
 using System.Windows.Media.Imaging;
 using Microsoft.WindowsAzure.Storage;
 
-
 namespace Microsoft.Samples.Kinect.ColorBasics
 {
     public class CameraIO
@@ -51,7 +50,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             BitmapEncoder encoder = new JpegBitmapEncoder();
                           encoder.Frames.Add(BitmapFrame.Create(_mainWindow.colorBitmap));
 
-            var path = GetnerateFile();
+            var path = GenerateFile();
 
             // write the new file to disk
             try
@@ -72,11 +71,11 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         }
 
 
-        private static string GetnerateFile()
+        private static string GenerateFile()
         {
-            DateTime now = System.DateTime.Now;
-            string nowPath = now.Month.ToString() + "_" + now.Day.ToString() + "_" + now.Year.ToString() + "_" +
-                             now.Hour.ToString() + "_" + now.Minute.ToString() + "_" + now.Second.ToString() + "_" +
+            DateTime now   = System.DateTime.Now;
+            string nowPath = now.Month.ToString() + "_" + now.Day.ToString()    + "_" + now.Year.ToString()   + "_" +
+                             now.Hour.ToString()  + "_" + now.Minute.ToString() + "_" + now.Second.ToString() + "_" +
                              now.Millisecond.ToString();
 
             if (String.IsNullOrEmpty(VidSegPath) || FramesInPath > ImagesPerZip)

@@ -80,7 +80,7 @@
             // initialize the components (controls) of the window
             this.InitializeComponent();
 
-            //kinectManager = new KinectManager();
+            kinectManager = new KinectManager();
             CameraIo      = new CameraIO(this);
         }
 

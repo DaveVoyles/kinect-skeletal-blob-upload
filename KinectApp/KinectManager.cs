@@ -32,6 +32,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             this.kinectSensor.Open();
 
             this.bodyFrameReader.FrameArrived += this.Reader_FrameArrived;
+            Debug.WriteLine("Kinect Manager init");
         }
 
 
