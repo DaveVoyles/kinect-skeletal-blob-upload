@@ -26,3 +26,5 @@ bottom of the screen, notifying you that it is recording frames and then uploadi
 You need to replace your *BlobConnString* in MainWindow.xaml.cs with your own 
 [Azure Blob Storage Connection String.](https://docs.microsoft.com/en-us/azure/storage/storage-configure-connection-string)
 in order to connect to your Blob Storage account, where the zipped up frames will remain. 
+
+![alt tag](https://github.com/DaveVoyles/kinect-skeletal-blob-upload/blob/master/KinectApp/Images/KinectSkeletalTracker.PNG)
