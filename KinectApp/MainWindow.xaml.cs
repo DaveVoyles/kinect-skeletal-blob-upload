@@ -1,4 +1,8 @@
-﻿namespace Microsoft.Samples.Kinect.ColorBasics
+﻿/* Copyright Microsoft Cop. 2016, Dave Voyles
+ * www.DaveVoyles.com | Twitter.com/DaveVoyles
+ * GitHub Repository w/ Instructions: https://github.com/DaveVoyles/kinect-skeletal-blob-upload
+ */
+namespace Microsoft.Samples.Kinect.ColorBasics
 {
     using System.ComponentModel;
     using System.Windows;
@@ -12,6 +16,9 @@
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        /// <summary>
+        /// TODO: Replace with your connection string
+        /// </summary>
         public const string BlobConnString = @"DefaultEndpointsProtocol=https;AccountName=medtesting;AccountKey=uIVqF3BEvIrftCXB7l0f5AEwAjVUy0s2Ab3mt7nyrufbuTKtgB0YfaWOf1gMowvbGqmRxSCpw6+rV6vtTTqTjg==";
 
         /// <summary>

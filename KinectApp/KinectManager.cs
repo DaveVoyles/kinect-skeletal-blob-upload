@@ -1,4 +1,8 @@
-﻿using System.Diagnostics;
+﻿/* Copyright Microsoft Cop. 2016, Dave Voyles
+ * www.DaveVoyles.com | Twitter.com/DaveVoyles
+ * GitHub Repository w/ Instructions: https://github.com/DaveVoyles/kinect-skeletal-blob-upload
+ */
+using System.Diagnostics;
 using Microsoft.Kinect;
 
 namespace Microsoft.Samples.Kinect.ColorBasics
@@ -32,7 +36,6 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             this.kinectSensor.Open();
 
             this.bodyFrameReader.FrameArrived += this.Reader_FrameArrived;
-            Debug.WriteLine("Kinect Manager init");
         }
 
 

@@ -1,3 +1,7 @@
+/* Copyright Microsoft Cop. 2016, Dave Voyles
+ * www.DaveVoyles.com | Twitter.com/DaveVoyles
+ * GitHub Repository w/ Instructions: https://github.com/DaveVoyles/kinect-skeletal-blob-upload
+ */
 using System;
 using System.IO;
 using System.IO.Compression;
@@ -10,7 +14,16 @@ namespace Microsoft.Samples.Kinect.ColorBasics
     {
         private static MainWindow _mainWindow;
 
+        /// <summary>
+        /// Directory where images will be stored
+        /// </summary>
         public const string ImageBasePath = "C:\\Images\\";
+
+        /// <summary>
+        /// Name of container where blobs willl be stored
+        /// </summary>
+        private static string containerName = "kinectstreams";
+
         private static int ImagesPerZip   = 200;
         private static string VidSegPath  = null;
         private static int FramesInPath   = 0;
@@ -29,7 +42,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         {
             var sAccount      = CloudStorageAccount.Parse(MainWindow.BlobConnString);
             var blobClient    = sAccount.CreateCloudBlobClient();
-            var container     = blobClient.GetContainerReference("kinectstreams");
+            var container     = blobClient.GetContainerReference(containerName);
                 container.CreateIfNotExists();
 
             var blockBlob     = container.GetBlockBlobReference(blobName);
@@ -50,7 +63,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             BitmapEncoder encoder = new JpegBitmapEncoder();
                           encoder.Frames.Add(BitmapFrame.Create(_mainWindow.colorBitmap));
 
-            var path = GenerateFile();
+            var path = GenerateFileAndUpload();
 
             // write the new file to disk
             try
@@ -71,7 +84,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         }
 
 
-        private static string GenerateFile()
+        private static string GenerateFileAndUpload()
         {
             DateTime now   = System.DateTime.Now;
             string nowPath = now.Month.ToString() + "_" + now.Day.ToString()    + "_" + now.Year.ToString()   + "_" +
