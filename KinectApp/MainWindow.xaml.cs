@@ -24,7 +24,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         /// <summary>
         /// Active Kinect sensor
         /// </summary>
-        private KinectSensor kinectSensor        = null;
+        private KinectSensor kinectSensor = null;
 
         /// <summary>
         /// Reader for color frames
@@ -34,13 +34,13 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         /// <summary>
         /// Bitmap to display
         /// </summary>
-        public WriteableBitmap colorBitmap       = null;
+        public WriteableBitmap colorBitmap = null;
 
         /// <summary>
         /// Current status text to display
         /// </summary>
-        public string statusText                 = null;
- 
+        public string statusText = null;
+
 
         private KinectManager kinectManager;
         private readonly CameraIO _cameraIo;
@@ -53,21 +53,21 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         public MainWindow()
         {
             // get the kinectSensor object
-            this.kinectSensor                      = KinectSensor.GetDefault();
+            this.kinectSensor = KinectSensor.GetDefault();
 
             // open the reader for the color frames
-            this.colorFrameReader                  = this.kinectSensor.ColorFrameSource.OpenReader();
+            this.colorFrameReader = this.kinectSensor.ColorFrameSource.OpenReader();
 
             // wire handler for frame arrival
-            this.colorFrameReader.FrameArrived    += this.Reader_ColorFrameArrived;
+            this.colorFrameReader.FrameArrived += this.Reader_ColorFrameArrived;
 
             // create the colorFrameDescription from the ColorFrameSource using Bgra format
             FrameDescription colorFrameDescription = this.kinectSensor.ColorFrameSource.CreateFrameDescription(ColorImageFormat.Bgra);
 
             // create the bitmap to display
-            this.colorBitmap                       = new WriteableBitmap(colorFrameDescription.Width, 
-                                                                         colorFrameDescription.Height, 
-                                                                         96.0, 96.0, 
+            this.colorBitmap = new WriteableBitmap(colorFrameDescription.Width,
+                                                                         colorFrameDescription.Height,
+                                                                         96.0, 96.0,
                                                                          PixelFormats.Bgr32,
                                                                          null);
 
@@ -88,7 +88,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             this.InitializeComponent();
 
             kinectManager = new KinectManager();
-            CameraIo      = new CameraIO(this);
+            CameraIo = new CameraIO(this);
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             this.kinectSensor = null;
         }
 
-  
+
 
 
         /// <summary>
@@ -174,8 +174,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
 
                     this.colorBitmap.Unlock();
                 }
-                // TODO: Have KinectManager call this
-                // CameraIo.SaveFrame();
+
             }
         }
 
@@ -192,3 +191,4 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         }
     }
 }
+

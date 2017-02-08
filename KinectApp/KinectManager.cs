@@ -22,12 +22,11 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         private int bodyIndex;
 
         // flag to asses if a body is currently tracked
-        private bool bodyTracked                = false;
-        public bool isTracking                  = true;
+        private bool canTrackBodies             = false;
 
         public KinectManager()
         {
-            this.kinectSensor    = KinectSensor.GetDefault();
+            this.kinectSensor = KinectSensor.GetDefault();
 
             // open the reader for the body frames
             this.bodyFrameReader = this.kinectSensor.BodyFrameSource.OpenReader();
@@ -45,14 +44,11 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         /// </summary>
         private void Reader_FrameArrived(object sender, BodyFrameArrivedEventArgs e)
         {
-            bool dataReceived = false;
-
-            if (GetAndRefreshBodyData(e, dataReceived)) return;
-
-            Body body = null;
-                 body = TrackBodies(body);
-
-            SaveCameraFrame(body);
+            // Check for data / bodies in the frame
+            if (GetAndRefreshBodyData(e, false)) { return; }
+   
+            // Have a frame + bodies? Start recording
+            SaveCameraFrame(TrackBodies());
         }
 
 
@@ -62,22 +58,26 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         /// <param name="body">The body(ies) we are attempting to track</param>
         private void SaveCameraFrame(Body body)
         {
-            if (body != null && this.bodyTracked && body.IsTracked)
+            if (body != null && this.canTrackBodies && body.IsTracked)
             {
                 // Tracking skeleton -- save video to file
                 CameraIO.SaveFrame();
             }
             else
             {
-                isTracking = false;
                 Debug.WriteLine("------STOPPED: No longer tracking-------");
             }
         }
 
 
-        private Body TrackBodies(Body body)
+        /// <summary>
+        /// Track any bodies on screen. If we are able to, add them tot he body array.
+        /// </summary>
+        private Body TrackBodies()
         {
-            if (this.bodyTracked)
+            Body body = null;
+
+            if (this.canTrackBodies)
             {
                 // If we are tracking a new body.....
                 if (this.bodies[this.bodyIndex].IsTracked)
@@ -87,21 +87,18 @@ namespace Microsoft.Samples.Kinect.ColorBasics
                 }
                 else
                 {
-                    // Not tracking anything
-                    bodyTracked = false;
-                    Debug.Write("Not tracking body");
+                    this.canTrackBodies = false;
                 }
             }
-            // If we're able to track the body, return it.
-            if (bodyTracked) return body;
 
             // Loop through all of the bodies we are currently tracking
             for (var i = 0; i < this.bodies.Length; ++i)
             {
+                // Not tracking any bodies? Keep going.
                 if (!this.bodies[i].IsTracked) continue;
 
                 this.bodyIndex   = i;
-                this.bodyTracked = true;
+                this.canTrackBodies = true;
                 break;
             }
             return body;
@@ -115,18 +112,19 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         {
             using (BodyFrame bodyFrame = e.FrameReference.AcquireFrame())
             {
-                // Not able to track? Exit.
+                // Not able to track get a frame, which then tracks bodies. Report no data.
                 if (bodyFrame == null) return !dataReceived;
 
-                // Trying to track a body, but cannot find any
+                // We can capture a frame. Grab any bodies we find in the frame and add it to the BodyCount for this frame
                 if (this.bodies == null)
                 {
-                    Debug.WriteLine("Bodies are null");
                     this.bodies = new Body[bodyFrame.BodyCount];
                 }
+                // Add our bodies array to frame
                 bodyFrame.GetAndRefreshBodyData(this.bodies);
             }
             return false;
         }
     }
 }
+
