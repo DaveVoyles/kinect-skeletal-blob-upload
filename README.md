@@ -6,10 +6,17 @@
 
 --------------------------
 
+## Requirements
+
+- Visual Studio 2015
+-[Kinect 2 sensor](https://www.amazon.com/Microsoft-Kinect-for-Windows-V2/dp/B00KZIVEXO) 
+-[Azure subscription](https://azure.microsoft.com/en-us/offers/ms-azr-0044p/)
+
 ## Directions
 
-You must have a [Kinect 2 sensor](https://www.amazon.com/Microsoft-Kinect-for-Windows-V2/dp/B00KZIVEXO) attached to a PC to run this.
-Simply fork this application and run.
+1. Attach Kinect 
+2. Restore NuGet packages *(Microsoft.Kinect)*
+3. Run in Visual Studio
 
 This application works as follows:
 
