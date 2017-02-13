@@ -8,14 +8,14 @@
 
 ## Requirements
 
-- Visual Studio 2015
+- [Visual Studio 2015](https://www.visualstudio.com/downloads/)
 - [Kinect 2 sensor](https://www.amazon.com/Microsoft-Kinect-for-Windows-V2/dp/B00KZIVEXO) 
 - [Azure subscription](https://azure.microsoft.com/en-us/offers/ms-azr-0044p/)
 
 ## Directions
 
 1. Attach Kinect 
-2. Restore NuGet packages *(Microsoft.Kinect)*
+2. Restore NuGet packages [*(Microsoft.Kinect)*](https://www.nuget.org/packages/Microsoft.Kinect/)
 3. Run in Visual Studio
 
 This application works as follows:
