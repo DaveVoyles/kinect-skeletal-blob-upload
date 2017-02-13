@@ -3,9 +3,11 @@
  * GitHub Repository w/ Instructions: https://github.com/DaveVoyles/kinect-skeletal-blob-upload
  */
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Windows.Media.Imaging;
+using Microsoft.Samples.Kinect.ColorBasics.Properties;
 using Microsoft.WindowsAzure.Storage;
 
 namespace Microsoft.Samples.Kinect.ColorBasics
@@ -18,6 +20,32 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         /// Directory where images will be stored
         /// </summary>
         public const string ImageBasePath = "C:\\Images\\";
+
+        /// <summary>
+        /// TODO: Replace with your connection string
+        /// </summary>
+        public const string BlobConnString = @"DefaultEndpointsProtocol=https;AccountName=davevblobtest;AccountKey=xTxO/Yd9gErWkfkd0Gaa9PlPb9if2KWD4iA3iRjcdpio3RAhwctMgS6hzcCECmivlBwucKCQSqaqRwyfq3IkBQ==";
+
+
+        /// <summary>
+        /// This builds a connection string
+        /// </summary>
+        /// <param name="accountName">EX: "davevblobtest"</param>
+        /// <param name="accountKey">EX: "xTxO/Yd9gErWkfkd0Gaa9PlPb9if2KWD4iA3iRjcdpio3RAhwctMgS6hzcCECmivlBwucKCQSqaqRwyfq3IkBQ==" </param>
+        /// <returns></returns>
+        private static string GetBlobConnString(string accountName, string accountKey)
+        {
+            var accountString = @"DefaultEndpointsProtocol=https;AccountName=";
+                accountString += accountName + ";";
+
+            var accountKeyString = @"AccountKey=";
+                accountKeyString += accountKey;
+
+            var connString = accountString + accountKeyString;
+
+            Debug.WriteLine(connString);
+            return connString;
+        }
 
         /// <summary>
         /// Name of container where blobs willl be stored
@@ -40,7 +68,11 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         /// </summary>
         private static async void SaveZipToBlobAsync(string zipPath, string blobName)
         {
-            var sAccount      = CloudStorageAccount.Parse(MainWindow.BlobConnString);
+            var sAccount      = CloudStorageAccount.Parse(BlobConnString);
+            //var sAccount = CloudStorageAccount.Parse(
+            //    GetBlobConnString("davevblobtest",
+            //                      "xTxO/Yd9gErWkfkd0Gaa9PlPb9if2KWD4iA3iRjcdpio3RAhwctMgS6hzcCECmivlBwucKCQSqaqRwyfq3IkBQ=="));
+                            
             var blobClient    = sAccount.CreateCloudBlobClient();
             var container     = blobClient.GetContainerReference(containerName);
                 container.CreateIfNotExists();
@@ -75,32 +107,39 @@ namespace Microsoft.Samples.Kinect.ColorBasics
                     FramesInPath += 1;
                 }
 
-                _mainWindow.StatusText = string.Format(Properties.Resources.SavedScreenshotStatusTextFormat, path);
+                _mainWindow.StatusText = String.Format(Resources.SavedScreenshotStatusTextFormat, path);
             }
             catch (IOException)
             {
-                _mainWindow.StatusText = string.Format(Properties.Resources.FailedScreenshotStatusTextFormat, path);
+                _mainWindow.StatusText = String.Format(Resources.FailedScreenshotStatusTextFormat, path);
             }
         }
 
 
+        /// <summary>
+        /// Generate unique path / name each time we save the kinect zip files. Makes it easy to sort / sift through later
+        /// </summary>
+        /// <returns>A unique name/path for storage</returns>
         private static string GenerateFileAndUpload()
         {
-            DateTime now   = System.DateTime.Now;
+            // Generating unique name
+            DateTime now   = DateTime.Now;
             string nowPath = now.Month.ToString() + "_" + now.Day.ToString()    + "_" + now.Year.ToString()   + "_" +
                              now.Hour.ToString()  + "_" + now.Minute.ToString() + "_" + now.Second.ToString() + "_" +
                              now.Millisecond.ToString();
 
+            // Have frames (images) and we path: Zip it up and store it in the cloud
             if (String.IsNullOrEmpty(VidSegPath) || FramesInPath > ImagesPerZip)
             {
                 if (!isFirstRound)
                 {
                     string zipPath = ImageBasePath + VidSegPath + ".zip";
                     ZipFile.CreateFromDirectory(ImageBasePath + VidSegPath, zipPath);
-                    SaveZipToBlobAsync(zipPath, VidSegPath); // Slowest point in app
+                    SaveZipToBlobAsync(zipPath, VidSegPath); // Slowest point in app, as it is uploading to Azure 
                 }  
                 VidSegPath   = nowPath;
                 FramesInPath = 0;
+                // Create local directory for our images
                 Directory.CreateDirectory(ImageBasePath + VidSegPath + "\\");
                 isFirstRound = false;
             }

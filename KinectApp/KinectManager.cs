@@ -71,7 +71,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
 
 
         /// <summary>
-        /// Track any bodies on screen. If we are able to, add them tot he body array.
+        /// Track any bodies on screen. If we are able to, add them to the body array.
         /// </summary>
         private Body TrackBodies()
         {

@@ -17,11 +17,6 @@ namespace Microsoft.Samples.Kinect.ColorBasics
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         /// <summary>
-        /// TODO: Replace with your connection string
-        /// </summary>
-        public const string BlobConnString = @"DefaultEndpointsProtocol=https;AccountName=medtesting;AccountKey=uIVqF3BEvIrftCXB7l0f5AEwAjVUy0s2Ab3mt7nyrufbuTKtgB0YfaWOf1gMowvbGqmRxSCpw6+rV6vtTTqTjg==";
-
-        /// <summary>
         /// Active Kinect sensor
         /// </summary>
         private KinectSensor kinectSensor = null;
