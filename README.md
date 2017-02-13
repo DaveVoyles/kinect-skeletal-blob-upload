@@ -9,8 +9,8 @@
 ## Requirements
 
 - Visual Studio 2015
--[Kinect 2 sensor](https://www.amazon.com/Microsoft-Kinect-for-Windows-V2/dp/B00KZIVEXO) 
--[Azure subscription](https://azure.microsoft.com/en-us/offers/ms-azr-0044p/)
+- [Kinect 2 sensor](https://www.amazon.com/Microsoft-Kinect-for-Windows-V2/dp/B00KZIVEXO) 
+- [Azure subscription](https://azure.microsoft.com/en-us/offers/ms-azr-0044p/)
 
 ## Directions
 
@@ -27,6 +27,7 @@ This application works as follows:
 
 Stand back from the Kinect camera, and watch as it tracks your skeleton. You'll know it works when the debug message appears at the 
 bottom of the screen, notifying you that it is recording frames and then uploading to blob storage. 
+
 
 ### Azure Requirements
 
